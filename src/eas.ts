@@ -72,11 +72,15 @@ export function getUpdateGroupQr({
   projectId,
   updateGroupId,
   appSlug,
+  scheme,
   qrTarget,
 }: {
   projectId: string;
   updateGroupId: string;
   appSlug: string;
+  // Allow overriding the scheme so people with different app bundles can direct
+  // QR codes into the right bundle for the given build.
+  scheme?: string;
   qrTarget: 'expo-go' | 'dev-build';
 }): string {
   const url = new URL('https://qr.expo.dev/eas-update');
@@ -85,7 +89,7 @@ export function getUpdateGroupQr({
     // While the parameter is called `appScheme`, it's actually the app's slug
     // This should only be added when using dev clients as target
     // See: https://github.com/expo/expo/blob/8ae75dde393e5d2393d446227a1fe2482c75eec3/packages/expo-dev-client/plugin/src/getDefaultScheme.ts#L17
-    url.searchParams.append('appScheme', appSlug.replace(/[^A-Za-z0-9+\-.]/g, ''));
+    url.searchParams.append('appScheme', scheme || appSlug.replace(/[^A-Za-z0-9+\-.]/g, ''));
   }
 
   url.searchParams.append('projectId', projectId);

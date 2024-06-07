@@ -42145,13 +42145,13 @@ exports.createUpdate = createUpdate;
 /**
  * Create a QR code link for an EAS Update.
  */
-function getUpdateGroupQr({ projectId, updateGroupId, appSlug, qrTarget, }) {
+function getUpdateGroupQr({ projectId, updateGroupId, appSlug, scheme, qrTarget, }) {
     const url = new url_1.URL('https://qr.expo.dev/eas-update');
     if (qrTarget === 'dev-build') {
         // While the parameter is called `appScheme`, it's actually the app's slug
         // This should only be added when using dev clients as target
         // See: https://github.com/expo/expo/blob/8ae75dde393e5d2393d446227a1fe2482c75eec3/packages/expo-dev-client/plugin/src/getDefaultScheme.ts#L17
-        url.searchParams.append('appScheme', appSlug.replace(/[^A-Za-z0-9+\-.]/g, ''));
+        url.searchParams.append('appScheme', scheme || appSlug.replace(/[^A-Za-z0-9+\-.]/g, ''));
     }
     url.searchParams.append('projectId', projectId);
     url.searchParams.append('groupId', updateGroupId);
