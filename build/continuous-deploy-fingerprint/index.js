@@ -41937,13 +41937,13 @@ exports.createUpdate = createUpdate;
 /**
  * Create a QR code link for an EAS Update.
  */
-function getUpdateGroupQr({ projectId, updateGroupId, appSlug, qrTarget, }) {
+function getUpdateGroupQr({ projectId, updateGroupId, appSlug, scheme, qrTarget, }) {
     const url = new url_1.URL('https://qr.expo.dev/eas-update');
     if (qrTarget === 'dev-build') {
         // While the parameter is called `appScheme`, it's actually the app's slug
         // This should only be added when using dev clients as target
         // See: https://github.com/expo/expo/blob/8ae75dde393e5d2393d446227a1fe2482c75eec3/packages/expo-dev-client/plugin/src/getDefaultScheme.ts#L17
-        url.searchParams.append('appScheme', appSlug.replace(/[^A-Za-z0-9+\-.]/g, ''));
+        url.searchParams.append('appScheme', scheme || appSlug.replace(/[^A-Za-z0-9+\-.]/g, ''));
     }
     url.searchParams.append('projectId', projectId);
     url.searchParams.append('groupId', updateGroupId);
@@ -44528,6 +44528,7 @@ function collectContinuousDeployFingerprintInput() {
     return {
         profile: (0, core_1.getInput)('profile'),
         branch: (0, core_1.getInput)('branch'),
+        scheme: (0, core_1.getInput)('scheme'),
         githubToken: (0, core_1.getInput)('github-token'),
         workingDirectory: (0, core_1.getInput)('working-directory'),
     };
@@ -44708,7 +44709,9 @@ function createSummaryForUpdatesAndBuilds({ config, projectId, updates, builds, 
     const iosUpdate = updates.find(update => update.platform === 'ios');
     const getBuildLink = (build) => build ? `[Build Permalink](${(0, expo_1.getBuildLogsUrl)(build)})` : 'n/a';
     const getUpdateLink = (update) => update ? `[Update Permalink](${(0, eas_1.getUpdateGroupWebsite)({ projectId, updateGroupId: update.group })})` : 'n/a';
-    const getUpdateQRURL = (update) => update ? (0, eas_1.getUpdateGroupQr)({ projectId, updateGroupId: update.group, appSlug, qrTarget }) : null;
+    const getUpdateQRURL = (update) => update
+        ? (0, eas_1.getUpdateGroupQr)({ projectId, updateGroupId: update.group, appSlug, scheme: options.scheme, qrTarget })
+        : null;
     const getBuildDetails = (build) => build
         ? getBuildLink(build) +
             '<br />' +

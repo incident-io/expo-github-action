@@ -15,6 +15,8 @@ inputs:
   branch:
     description: The EAS Update branch on which to publish.
     required: true
+  scheme:
+    description: An optional scheme to use to when generating QR codes.
   github-token:
     description: GitHub token to use when commenting on PR
     required: false

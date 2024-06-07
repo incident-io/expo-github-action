@@ -14,6 +14,7 @@ export function collectContinuousDeployFingerprintInput() {
   return {
     profile: getInput('profile'),
     branch: getInput('branch'),
+    scheme: getInput('scheme'),
     githubToken: getInput('github-token'),
     workingDirectory: getInput('working-directory'),
   };
@@ -254,7 +255,7 @@ function createSummaryForUpdatesAndBuilds({
   projectId: string;
   updates: EasUpdate[];
   builds: BuildInfo[];
-  options: { qrTarget?: 'expo-go' | 'dev-build' | 'dev-client'; workingDirectory: string };
+  options: { qrTarget?: 'expo-go' | 'dev-build' | 'dev-client'; scheme?: string; workingDirectory: string };
 }) {
   const appSlug = config.slug;
   const qrTarget = getQrTarget(options);
@@ -271,7 +272,9 @@ function createSummaryForUpdatesAndBuilds({
   const getUpdateLink = (update: EasUpdate | undefined) =>
     update ? `[Update Permalink](${getUpdateGroupWebsite({ projectId, updateGroupId: update.group })})` : 'n/a';
   const getUpdateQRURL = (update: EasUpdate | undefined) =>
-    update ? getUpdateGroupQr({ projectId, updateGroupId: update.group, appSlug, qrTarget }) : null;
+    update
+      ? getUpdateGroupQr({ projectId, updateGroupId: update.group, appSlug, scheme: options.scheme, qrTarget })
+      : null;
   const getBuildDetails = (build: BuildInfo | undefined) =>
     build
       ? getBuildLink(build) +
